@@ -1,0 +1,41 @@
+name: Publish Destiny Data - Wednesday
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 6 * * 3"
+      timezone: "Europe/Berlin"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: crosscore-destiny-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Daten erzeugen
+        env:
+          BUNGIE_API_KEY: ${{ secrets.BUNGIE_API_KEY }}
+        run: python scripts/publish_all.py --target destiny
+      - name: Daten prüfen
+        run: python scripts/validate_release.py release_data --target destiny
+      - name: Release erstellen oder Assets aktualisieren
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view data-latest >/dev/null 2>&1; then
+            gh release upload data-latest release_data/destiny_data_manifest.json release_data/destiny_items.json.gz --clobber
+          else
+            gh release create data-latest release_data/destiny_data_manifest.json release_data/destiny_items.json.gz --title "CrossCore Data - Latest" --notes "Automatisch erzeugte öffentliche CrossCore-Datendateien." --latest
+          fi
