@@ -1,6 +1,0 @@
-{
-  "repository": "https://github.com/unhappyangel83/CrossCore-Data",
-  "release_tag": "data-latest",
-  "destiny_manifest": "https://github.com/unhappyangel83/CrossCore-Data/releases/download/data-latest/destiny_data_manifest.json",
-  "wargaming_manifest": "https://github.com/unhappyangel83/CrossCore-Data/releases/download/data-latest/wargaming_data_manifest.json"
-}
