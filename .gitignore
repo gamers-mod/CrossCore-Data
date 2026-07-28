@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.venv/
+release_data/
+.env
+*.log
